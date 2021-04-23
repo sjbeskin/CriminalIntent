@@ -13,11 +13,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class CrimeListFragment extends Fragment {
     private RecyclerView mCrimeRecyclerView;
     private CrimeAdapter mAdapter;
+    private Crime currentCrime;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -45,7 +48,7 @@ public class CrimeListFragment extends Fragment {
             mAdapter = new CrimeAdapter(crimes);
             mCrimeRecyclerView.setAdapter(mAdapter);
         } else {
-            mAdapter.notifyDataSetChanged();
+            mAdapter.notifyItemChanged(crimes.indexOf(currentCrime));
         }
     }
 
@@ -68,7 +71,9 @@ public class CrimeListFragment extends Fragment {
         public void bind(Crime crime) {
             mCrime = crime;
             mTitleTextView.setText(mCrime.getTitle());
-            mDateTextView.setText(mCrime.getDate().toString());
+            Date crimeDate = mCrime.getDate();
+            String crimeDateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(crimeDate);
+            mDateTextView.setText(crimeDateString);
             mSolvedImageView.setVisibility(crime.isSolved() ? View.VISIBLE : View.GONE);
         }
 
@@ -76,6 +81,7 @@ public class CrimeListFragment extends Fragment {
         public void onClick(View view) {
             Intent intent = MainActivity.newIntent(getActivity(), mCrime.getId());
             startActivity(intent);
+            currentCrime = mCrime;
         }
     }
 
